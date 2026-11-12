@@ -50,3 +50,20 @@ export function waNumber(raw = '') {
   else if (d.length === 9) d = `254${d}`
   return d.length >= 11 ? d : ''
 }
+
+/**
+ * Oldest first, by the first year in each item's `when` ("2004 to 2012" → 2004).
+ * Items with no year ("Secondary school") stay just after the item before them.
+ */
+export function oldestFirst(list = []) {
+  let last = -Infinity
+  return list
+    .map((item, i) => {
+      const y = String(item.when || '').match(/\b(19|20)\d{2}\b/)
+      const key = y ? Number(y[0]) : last + 0.5
+      last = y ? key : last
+      return { item, key, i }
+    })
+    .sort((a, b) => a.key - b.key || a.i - b.i)
+    .map((x) => x.item)
+}

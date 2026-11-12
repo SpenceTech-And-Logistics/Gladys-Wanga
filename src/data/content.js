@@ -82,9 +82,9 @@ export const defaults = {
       { when: '2022', title: 'Elected Governor of Homa Bay County', detail: 'Lead campaigner for the Azimio la Umoja coalition and one of seven women elected governor. Took office on 25 August 2022, the first woman to lead the county.' },
     ],
     education: [
-      { when: '2010 to 2012', title: 'MSc, Health Management', detail: 'Kenyatta University' },
       { when: '2000 to 2004', title: 'BSc, Health Management', detail: 'Kenyatta University' },
       { when: '2008 to 2009', title: 'Diploma in Project Management', detail: 'Kenya Institute of Management' },
+      { when: '2010 to 2012', title: 'MSc, Health Management', detail: 'Kenyatta University' },
     ],
   },
 
