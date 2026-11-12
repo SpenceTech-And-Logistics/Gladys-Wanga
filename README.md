@@ -37,6 +37,8 @@ The built-in content comes only from these public sources. Anything they did not
 Once Firebase is connected, anything saved in the dashboard replaces the built-in version.
 
 ## Dashboard features
+- **Engagements are part of Events** (types County leadership, Parliament, Party and campaigns); `/engagements` links redirect to `/events`. If anything was saved under the old Engagements section, **Fill the database → Move into Events** moves it across.
+- **Positions** are a section of the About page (`/about#positions`); `/positions` redirects there.
 - **Projects** and **Events**: public pages at `/projects` (tabs by funder, sector chips, status and sub-county filters) and `/events` (upcoming, then past events by year), each with a detail page, photos, optional video and a Share on WhatsApp button.
 - **Import from WhatsApp** (`/admin/whatsapp`): drop the zip or photos the team sent and paste their note (“-ward…”, “-stretch of…”, “-works done…”). The form fills itself in; pick the cover and save as a project, event or news story. Extra photos go to the Gallery. Videos are skipped (paste a YouTube/Facebook link instead).
 - **Categories** (`/admin/categories`): funders, sectors, event types and other lists. “＋ Add a new…” in any form also adds to these.

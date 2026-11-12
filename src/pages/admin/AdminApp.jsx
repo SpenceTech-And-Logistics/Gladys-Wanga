@@ -9,7 +9,7 @@ import SyncPage from './SyncPage.jsx'
 import WhatsAppImport from './WhatsAppImport.jsx'
 import { rememberAdmin } from '../../lib/useAdmin.js'
 import {
-  deliveryDefaults, deliveryFields, countyDefaults, countyFields, contactDefaults, contactFields, engagementsConfig, eventsConfig, galleryConfig,
+  deliveryDefaults, deliveryFields, countyDefaults, countyFields, contactDefaults, contactFields, eventsConfig, galleryConfig,
   listDefaults, listFields, positionsConfig, pressConfig, profileDefaults, profileFields, projectsConfig,
 } from './sections.js'
 import '../../styles/admin.css'
@@ -25,7 +25,6 @@ const NAV = [
   ['profile', 'Profile and career'],
   ['office', 'The Governor’s office'],
   ['county', 'Homa Bay County'],
-  ['engagements', 'Engagements'],
   ['positions', 'Positions'],
   ['contact', 'Contact and social links'],
   ['categories', 'Categories'],
@@ -35,7 +34,7 @@ const NAV = [
 /** The public page each dashboard section changes. */
 const SITE_PATH = {
   overview: '/', profile: '/about', office: '/delivery', county: '/county', projects: '/projects', events: '/events', news: '/news',
-  gallery: '/gallery', engagements: '/engagements', positions: '/positions', contact: '/contact',
+  gallery: '/gallery', positions: '/about#positions', contact: '/contact',
 }
 
 function authMessage(code = '') {
@@ -201,9 +200,6 @@ export default function AdminApp() {
       break
     case 'contact':
       body = <DocEditor docId="contact" title="Contact and social links" blurb="Office details and links shown on the Contact page and footer." fields={contactFields} defaults={contactDefaults} />
-      break
-    case 'engagements':
-      body = <CollectionEditor {...engagementsConfig} />
       break
     case 'projects':
       body = <CollectionEditor {...projectsConfig} />

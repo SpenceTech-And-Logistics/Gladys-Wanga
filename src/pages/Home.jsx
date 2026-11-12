@@ -12,7 +12,7 @@ import { formatDate } from '../lib/media.js'
 const LakeScene = lazy(() => import('../Scene3D.jsx'))
 
 export default function Home() {
-  const { profile, delivery, press, engagements, positions, contact } = useContent()
+  const { profile, delivery, press, events, positions, contact } = useContent()
   const socials = (contact.social || []).filter((l) => l.url)
   const news = press.slice(0, 3)
   const stats = (delivery.stats || []).map((s) => ({ n: Number(s.value) || 0, label: s.label }))
@@ -98,7 +98,7 @@ export default function Home() {
             <span className="eyebrow">Positions</span>
             <h2 className="title">Where she serves</h2>
           </div>
-          <Link to="/positions" className="link-arrow">All positions <span>→</span></Link>
+          <Link to="/about#positions" className="link-arrow">All positions <span>→</span></Link>
         </Reveal>
         <div className="grid grid-4">
           {positions.slice(0, 4).map((p, i) => (
@@ -111,22 +111,22 @@ export default function Home() {
         </div>
       </section>
 
-      {engagements.length > 0 && (
+      {events.length > 0 && (
         <section className="wrap section">
           <Reveal className="section-head">
             <div>
-              <span className="eyebrow">Engagements</span>
+              <span className="eyebrow">Events</span>
               <h2 className="title">The Governor at work</h2>
             </div>
-            <Link to="/engagements" className="link-arrow">All engagements <span>→</span></Link>
+            <Link to="/events" className="link-arrow">All events <span>→</span></Link>
           </Reveal>
           <div className="grid grid-3">
-            {engagements.slice(0, 3).map((p, i) => (
+            {events.slice(0, 3).map((p, i) => (
               <Reveal key={p.id} delay={i * 100}>
-                <Link to={`/engagements/${p.id}`} className="card card-link">
+                <Link to={`/events/${p.id}`} className="card card-link">
                   <div className="card-img">{p.photos?.[0] ? <img src={p.photos[0]} alt={p.title} loading="lazy" /> : <Placeholder />}</div>
                   <div className="card-body">
-                    <span className="tag">{p.category}</span>
+                    <span className="tag">{p.type}</span>
                     <h3>{p.title}</h3>
                     <span className="meta">{[p.venue, formatDate(p.date)].filter(Boolean).join(' · ')}</span>
                   </div>

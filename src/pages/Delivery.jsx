@@ -84,8 +84,8 @@ export default function Delivery() {
 
       <section className="wrap section-tight">
         <Reveal className="cta">
-          <div><h2>See the Governor’s milestones</h2><p>From the county to Parliament, party and campaigns.</p></div>
-          <Link to="/engagements" className="btn btn-light">Engagements</Link>
+          <div><h2>See the Governor at work</h2><p>Tours, launches and public forums, and milestones from the county, Parliament and party.</p></div>
+          <Link to="/events" className="btn btn-light">Events</Link>
         </Reveal>
       </section>
     </>

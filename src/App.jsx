@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react'
-import { Outlet, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import Footer from './components/Footer.jsx'
 import Navbar from './components/Navbar.jsx'
 import { useScroll } from './lib/hooks.js'
@@ -11,9 +11,6 @@ import News from './pages/News.jsx'
 import NotFound from './pages/NotFound.jsx'
 import County from './pages/County.jsx'
 import Delivery from './pages/Delivery.jsx'
-import Positions from './pages/Positions.jsx'
-import EngagementDetail from './pages/EngagementDetail.jsx'
-import Engagements from './pages/Engagements.jsx'
 import Events, { EventDetail } from './pages/Events.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import Projects from './pages/Projects.jsx'
@@ -27,8 +24,6 @@ const TITLES = {
   '/about': 'About',
   '/delivery': 'The Governor’s office',
   '/county': 'Homa Bay County',
-  '/positions': 'Positions',
-  '/engagements': 'Engagements',
   '/projects': 'Projects',
   '/events': 'Events',
   '/news': 'News',
@@ -36,13 +31,26 @@ const TITLES = {
   '/contact': 'Contact',
 }
 
+/** Old /engagements/:id links now live under Events. */
+function EngagementRedirect() {
+  const { id } = useParams()
+  return <Navigate to={`/events/${id}`} replace />
+}
+
 function Layout() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const bar = useRef(null)
 
+  // Links like /about#positions land on that section once the page has rendered.
   useEffect(() => {
-    window.scrollTo(0, 0)
-    const section = TITLES[pathname] || (pathname.startsWith('/engagements/') ? 'Engagement' : pathname.startsWith('/projects/') ? 'Project' : pathname.startsWith('/events/') ? 'Event' : '')
+    if (!hash) return
+    const t = setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120)
+    return () => clearTimeout(t)
+  }, [pathname, hash])
+
+  useEffect(() => {
+    if (!window.location.hash) window.scrollTo(0, 0)
+    const section = TITLES[pathname] || (pathname.startsWith('/projects/') ? 'Project' : pathname.startsWith('/events/') ? 'Event' : '')
     document.title = section
       ? `${section} | Gladys Wanga, Governor of Homa Bay County`
       : 'Gladys Wanga | Governor of Homa Bay County'
@@ -75,9 +83,9 @@ export default function App() {
         <Route path="about" element={<About />} />
         <Route path="delivery" element={<Delivery />} />
         <Route path="county" element={<County />} />
-        <Route path="positions" element={<Positions />} />
-        <Route path="engagements" element={<Engagements />} />
-        <Route path="engagements/:id" element={<EngagementDetail />} />
+        <Route path="positions" element={<Navigate to="/about#positions" replace />} />
+        <Route path="engagements" element={<Navigate to="/events" replace />} />
+        <Route path="engagements/:id" element={<EngagementRedirect />} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="events" element={<Events />} />

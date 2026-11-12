@@ -434,3 +434,4 @@ label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-w
 .admin-bar-menu a { border-radius: 10px; }
 @media print { .admin-bar, .edit-pill { display: none; } }
 .grid-fill { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+section[id] { scroll-margin-top: 110px; }

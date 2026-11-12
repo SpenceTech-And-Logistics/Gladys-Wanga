@@ -35,6 +35,7 @@ export function videoInfo(link = '') {
 
 export const formatDate = (d) => {
   if (!d) return ''
+  if (/^\d{4}$/.test(String(d).trim())) return String(d).trim()
   if (/^\d{4}-\d{2}$/.test(d)) return new Date(`${d}-01T12:00:00`).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
   const dt = new Date(d)
   return Number.isNaN(dt.getTime()) ? d : dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })

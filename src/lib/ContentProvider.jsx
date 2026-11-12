@@ -57,7 +57,10 @@ export function ContentProvider({ children }) {
     const hidden = r?.docs.hidden || {}
     const settings = r?.docs.settings || {}
     const published = (items) => items.filter((i) => i.status !== 'draft')
-    const pick = (c) => published(combine(r?.[c] || [], defaults[c] || [], hidden[c]))
+    const pick = (c, extra = [], hide = hidden[c]) => published(combine([...(r?.[c] || []), ...extra], defaults[c] || [], hide))
+    // Engagements were merged into Events. Anything still saved under the old section shows as an event
+    // until the office moves it across (Fill the database → Move).
+    const legacy = (r?.engagements || []).map((e) => ({ ...e, type: e.type || e.category, legacy: true }))
     // A list saved from the dashboard replaces the default one, so the office can also remove or rename entries.
     const lists = Object.fromEntries(Object.entries(LISTS).map(([k, base]) => [k, mergeList(settings[k]?.length ? settings[k] : base)]))
     const county = merge(defaults.county, r?.docs.county)
@@ -65,11 +68,10 @@ export function ContentProvider({ children }) {
 
     return {
       positions: pick('positions').sort(byOrder),
-      engagements: pick('engagements').sort(byDateDesc),
       press: pick('press').sort(byDateDesc),
       gallery: pick('gallery'),
       projects: pick('projects').sort(byDateDesc),
-      events: pick('events').sort(byDateDesc),
+      events: pick('events', legacy, [...(hidden.events || []), ...(hidden.engagements || [])]).sort(byDateDesc),
       profile: merge(defaults.profile, r?.docs.profile),
       delivery: merge(defaults.delivery, r?.docs.delivery),
       county,

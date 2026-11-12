@@ -28,8 +28,7 @@ export default function Footer() {
           <Link to="/county">The County</Link>
           <Link to="/projects">Projects</Link>
           <Link to="/events">Events</Link>
-          <Link to="/positions">Positions</Link>
-          <Link to="/engagements">Engagements</Link>
+          <Link to="/about#positions">Positions</Link>
           <Link to="/news">News</Link>
           <Link to="/gallery">Gallery</Link>
           <Link to="/contact">Contact</Link>

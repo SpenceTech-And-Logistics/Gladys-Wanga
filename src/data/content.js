@@ -3,7 +3,6 @@
 // (office email, phone, executive members, programme figures) is left blank for the office to add in the dashboard.
 // The dashboard (Firebase) overrides any of this once the office saves its own version.
 
-export const ENGAGEMENT_CATEGORIES = ['County leadership', 'Parliament', 'Party and campaigns', 'Community', 'Other']
 export const NEWS_CATEGORIES = ['Profile', 'Press coverage', 'Statements', 'Events']
 export const GALLERY_CATEGORIES = ['County', 'Community', 'Events', 'Parliament']
 export const POSITION_CATEGORIES = ['County', 'Parliament', 'Party', 'Movements']
@@ -16,7 +15,10 @@ export const PROJECT_SECTORS = [
   'Fisheries and Blue Economy', 'Trade and Markets', 'Youth and Sports', 'Gender and Social Services', 'Other',
 ]
 export const STAGES = ['Completed', 'Ongoing', 'Upcoming']
-export const EVENT_TYPES = ['Development tour', 'Project launch', 'Public participation', 'Community', 'Council of Governors', 'Other']
+export const EVENT_TYPES = [
+  'Development tour', 'Project launch', 'Public participation', 'Community', 'Council of Governors',
+  'County leadership', 'Parliament', 'Party and campaigns', 'Other',
+]
 
 /** The lists the dashboard lets the office extend, with the site setting that stores each one. */
 export const LISTS = {
@@ -25,7 +27,6 @@ export const LISTS = {
   eventTypes: EVENT_TYPES,
   newsCategories: NEWS_CATEGORIES,
   galleryCategories: GALLERY_CATEGORIES,
-  engagementCategories: ENGAGEMENT_CATEGORIES,
   positionCategories: POSITION_CATEGORIES,
 }
 
@@ -167,11 +168,12 @@ export const defaults = {
     { id: 'embrace', title: 'Founding member', organisation: 'Embrace Kenya movement', category: 'Movements', period: '', description: 'A movement that promoted the Building Bridges Initiative.', order: 9 },
   ],
 
-  engagements: [
+  // Milestones (formerly the Engagements page) are past events; their ids keep old links working.
+  events: [
     {
       id: '2022-governor',
       title: 'Took office as Governor of Homa Bay County',
-      category: 'County leadership',
+      type: 'County leadership',
       date: '2022-08-25',
       venue: 'Homa Bay County',
       description: 'Succeeded Cyprian Awiti as the second Governor of Homa Bay County and the first woman elected to the office, with Danish Otieno Onyango as Deputy Governor.',
@@ -180,7 +182,7 @@ export const defaults = {
     {
       id: '2022-azimio',
       title: 'Lead campaigner for Azimio la Umoja',
-      category: 'Party and campaigns',
+      type: 'Party and campaigns',
       date: '2022-06',
       venue: 'Homa Bay County',
       description: 'Was the lead campaigner for the Azimio la Umoja coalition in the 2022 election, the same election in which she was elected Governor.',
@@ -189,7 +191,7 @@ export const defaults = {
     {
       id: '2020-finance',
       title: 'First woman to chair the Finance and National Planning Committee',
-      category: 'Parliament',
+      type: 'Parliament',
       date: '2020',
       venue: 'National Assembly, Nairobi',
       description: 'Took the chair of the Departmental Committee on Finance and National Planning, which scrutinises the national budget and public finance legislation.',
@@ -198,7 +200,7 @@ export const defaults = {
     {
       id: '2013-woman-rep',
       title: 'Elected first Woman Representative for Homa Bay County',
-      category: 'Parliament',
+      type: 'Parliament',
       date: '2013-03',
       venue: 'Homa Bay County',
       description: 'Entered national politics in 2013 and held the seat until 2022, retaining it unopposed in 2017.',
@@ -249,10 +251,9 @@ export const defaults = {
     },
   ],
 
-  // No verified project or event records were in the supplied sources, so these start empty.
+  // No verified project records were in the supplied sources, so this starts empty.
   // The office adds them from the dashboard (or the WhatsApp import).
   projects: [],
-  events: [],
 
   gallery: [],
 }

@@ -30,7 +30,7 @@ export function dashboardPath(pathname) {
   const [, first = '', id] = pathname.split('/')
   const map = {
     '': 'profile', about: 'profile', delivery: 'office', county: 'county', positions: 'positions',
-    engagements: 'engagements', projects: 'projects', events: 'events', news: 'news', gallery: 'gallery', contact: 'contact',
+    engagements: 'events', projects: 'projects', events: 'events', news: 'news', gallery: 'gallery', contact: 'contact',
   }
   const section = map[first]
   if (!section) return '/admin'

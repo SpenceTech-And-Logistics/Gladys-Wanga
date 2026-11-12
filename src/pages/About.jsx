@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { EditLink } from '../components/AdminBar.jsx'
 import PageHead from '../components/PageHead.jsx'
 import Portrait from '../components/Portrait.jsx'
 import { Reveal } from '../components/Reveal.jsx'
@@ -6,7 +8,9 @@ import { oldestFirst } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 
 export default function About() {
-  const { profile } = useContent()
+  const { profile, positions, lists } = useContent()
+  const [cat, setCat] = useState('All')
+  const posCats = ['All', ...lists.positionCategories.filter((c) => positions.some((p) => p.category === c))]
   return (
     <>
       <PageHead eyebrow="About" title={profile.title} lead={`${profile.name}, ${profile.officialName} in public records.`} />
@@ -63,22 +67,31 @@ export default function About() {
         </section>
       )}
 
-      <section className="wrap section-tight">
-        <div className="grid grid-2">
-          <Reveal>
-            <Link to="/positions" className="card card-more">
-              <span className="eyebrow">Positions</span>
-              <h3>Offices, committees and party roles</h3>
-              <span className="link-arrow">See all positions <span>→</span></span>
-            </Link>
-          </Reveal>
-          <Reveal delay={90}>
-            <Link to="/engagements" className="card card-more">
-              <span className="eyebrow">Engagements</span>
-              <h3>Milestones from county leadership, Parliament and campaigns</h3>
-              <span className="link-arrow">See all engagements <span>→</span></span>
-            </Link>
-          </Reveal>
+      <section className="wrap section" id="positions">
+        <Reveal className="section-head">
+          <div>
+            <span className="eyebrow">Positions</span>
+            <h2 className="title">Offices and responsibilities</h2>
+          </div>
+        </Reveal>
+        <div className="chips" style={{ marginBottom: 28 }} role="group" aria-label="Filter positions">
+          {posCats.map((c) => (
+            <button key={c} type="button" className="chip" aria-pressed={cat === c} onClick={() => setCat(c)}>{c}</button>
+          ))}
+        </div>
+        <div className="grid grid-3">
+          {positions.filter((p) => cat === 'All' || p.category === cat).map((p, i) => (
+            <Reveal key={p.id || p.title} className="card pos-card" delay={(i % 3) * 70}>
+              <div className="pos-top">
+                <span className="tag">{p.category}</span>
+                {p.period && <span className="pos-when">{p.period}</span>}
+              </div>
+              <h3>{p.title}</h3>
+              <b className="pos-org">{p.organisation}</b>
+              {p.description && <p>{p.description}</p>}
+              <EditLink coll="positions" id={p.id} />
+            </Reveal>
+          ))}
         </div>
       </section>
 

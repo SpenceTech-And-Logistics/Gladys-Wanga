@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useContent } from '../../lib/useContent.js'
-import { copyBuiltins, syncStatus } from './store.js'
+import { copyBuiltins, legacyEngagements, moveEngagementsToEvents, syncStatus } from './store.js'
 
 const PATHS = { press: 'news' }
 
@@ -12,14 +12,18 @@ export default function SyncPage() {
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState(null)
 
+  const [legacy, setLegacy] = useState(0)
+
   const check = useCallback(async () => {
     setRows(null)
     setRows(await syncStatus())
+    setLegacy((await legacyEngagements().catch(() => [])).length)
   }, [])
 
   useEffect(() => {
     let alive = true
     syncStatus().then((r) => alive && setRows(r))
+    legacyEngagements().then((l) => alive && setLegacy(l.length), () => {})
     return () => {
       alive = false
     }
@@ -62,6 +66,23 @@ export default function SyncPage() {
           Firebase blocked {blocked.map((b) => b.label).join(', ')}. Publish the latest security rules first: Firebase console → Firestore Database → Rules, paste the contents of
           <code> firestore.rules</code> from the project and press Publish. Then press Check again.
         </p>
+      )}
+      {legacy > 0 && (
+        <div className="adm-banner">
+          <p><b>{legacy} item{legacy === 1 ? ' is' : 's are'} still saved under the old Engagements section.</b> Engagements are now part of Events. They already show on the Events page; move them across so you can edit them under Events.</p>
+          <button type="button" className="adm-btn" disabled={busy} onClick={async () => {
+            setBusy(true)
+            try {
+              const n = await moveEngagementsToEvents()
+              refresh()
+              setMsg({ text: `Moved ${n} engagement${n === 1 ? '' : 's'} into Events.` })
+              await check()
+            } catch (e) {
+              setMsg({ bad: true, text: e.message })
+            }
+            setBusy(false)
+          }}>{busy ? 'Moving…' : `Move ${legacy} into Events`}</button>
+        </div>
       )}
       <div className="adm-panel flush">
         {!rows ? (

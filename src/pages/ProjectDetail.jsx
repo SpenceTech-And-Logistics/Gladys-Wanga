@@ -30,7 +30,7 @@ export function ItemDetail({ item, coll, back, facts, eyebrow }) {
         <h1 className="rise" style={{ '--d': '100ms', marginTop: 14 }}>{item.title}</h1>
         <div className="detail-actions rise" style={{ '--d': '160ms' }}>
           <ShareWhatsApp title={item.title} path={`/${coll}/${item.id}`} />
-          <EditLink coll={coll} id={item.id} label="Edit in dashboard" />
+          <EditLink coll={item.legacy ? 'database' : coll} id={item.id} label="Edit in dashboard" />
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { ENGAGEMENT_CATEGORIES, GALLERY_CATEGORIES, LISTS, NEWS_CATEGORIES, POSITION_CATEGORIES, STAGES, defaults } from '../../data/content.js'
+import { GALLERY_CATEGORIES, LISTS, NEWS_CATEGORIES, POSITION_CATEGORIES, STAGES, defaults } from '../../data/content.js'
 
 const status = { key: 'status', label: 'Status', type: 'select', options: [{ value: 'published', label: 'Published' }, { value: 'draft', label: 'Draft (hidden)' }] }
 const badge = (it) => (it.status === 'draft' ? 'Draft' : 'Published')
@@ -48,53 +48,13 @@ export const contactFields = [
   { key: 'links', label: 'Other links', type: 'list', noun: 'link', wide: true, fields: [{ key: 'label', label: 'Name' }, { key: 'url', label: 'Link', type: 'url' }] },
 ]
 
-export const engagementsConfig = {
-  seed: defaults.engagements,
-  coll: 'engagements',
-  title: 'Engagements',
-  filterKey: 'category',
-  viewPath: (it) => `/engagements/${it.id}`,
-  blurb: 'Milestones and events: county leadership, Parliament, party and campaigns, community work. Each can have up to 5 photos, and they also appear in the Gallery.',
-  noun: 'Engagement',
-  empty: { title: '', category: ENGAGEMENT_CATEGORIES[0], date: '', venue: '', description: '', photos: [], status: 'published' },
-  fields: [
-    { key: 'title', label: 'Title', required: true, wide: true },
-    { key: 'category', label: 'Category', type: 'combo', listKey: 'engagementCategories' },
-    { key: 'date', label: 'Date', type: 'date' },
-    { key: 'venue', label: 'Where' },
-    { key: 'description', label: 'Description', type: 'textarea', wide: true, hint: 'One or two lines on what happened and why it matters.' },
-    { key: 'photos', label: 'Photos', type: 'images', max: 5, wide: true },
-    status,
-  ],
-  columns: [
-    { key: 'title', label: 'Engagement' },
-    { key: 'category', label: 'Category' },
-    { key: 'date', label: 'Date' },
-    { key: 'photos', label: 'Photos', render: (it) => (it.photos || []).length },
-    { key: 'status', label: 'Status', render: badge },
-  ],
-  importer: {
-    columns: ['title', 'category', 'date', 'venue', 'description'],
-    example: ['Community forum', 'Community', '2026-09-10', 'Homa Bay town', 'Residents met the Governor to discuss county services.'],
-    map: (r) => ({
-      title: String(r.title || '').trim(),
-      category: ENGAGEMENT_CATEGORIES.includes(r.category) ? r.category : 'Other',
-      date: String(r.date || ''),
-      venue: String(r.venue || ''),
-      description: String(r.description || ''),
-      photos: [],
-      status: 'published',
-    }),
-  },
-}
-
 export const positionsConfig = {
   seed: defaults.positions,
   coll: 'positions',
   title: 'Positions',
   filterKey: 'category',
-  viewPath: () => '/positions',
-  blurb: 'Offices, committees, party and movement roles, shown on the Positions page. Lower numbers appear first.',
+  viewPath: () => '/about#positions',
+  blurb: 'Offices, committees, party and movement roles, shown in the Positions section of the About page. Lower numbers appear first.',
   noun: 'Position',
   empty: { title: '', organisation: '', category: POSITION_CATEGORIES[0], period: '', description: '', order: 50, status: 'published' },
   fields: [
@@ -161,7 +121,7 @@ export const galleryConfig = {
   filterKey: 'category',
   bulk: true,
   viewPath: () => '/gallery',
-  blurb: 'Standalone photos and videos. Photos from projects, events, engagements and news appear in the public gallery automatically. Use “Add many photos” to upload a batch at once.',
+  blurb: 'Standalone photos and videos. Photos from projects, events and news appear in the public gallery automatically. Use “Add many photos” to upload a batch at once.',
   noun: 'Item',
   empty: { type: 'photo', title: '', category: GALLERY_CATEGORIES[0], src: '', url: '', status: 'published' },
   fields: [
@@ -238,7 +198,7 @@ export const eventsConfig = {
   seed: defaults.events,
   coll: 'events',
   title: 'Events',
-  blurb: 'Tours, launches and public forums. Events dated today or later show as Upcoming; the rest are listed by year with their photos.',
+  blurb: 'Tours, launches, public forums and milestones (County leadership, Parliament, Party and campaigns). Events dated today or later show as Upcoming; the rest are listed by year with their photos.',
   noun: 'Event',
   filterKey: 'type',
   viewPath: (it) => `/events/${it.id}`,
@@ -287,7 +247,6 @@ export const listFields = [
   { key: 'eventTypes', label: 'Event types', type: 'strings', wide: true },
   { key: 'newsCategories', label: 'News categories', type: 'strings', wide: true },
   { key: 'galleryCategories', label: 'Gallery categories', type: 'strings', wide: true },
-  { key: 'engagementCategories', label: 'Engagement categories', type: 'strings', wide: true },
   { key: 'positionCategories', label: 'Position groups', type: 'strings', wide: true },
 ]
 export const listDefaults = LISTS

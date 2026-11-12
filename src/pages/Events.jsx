@@ -33,7 +33,7 @@ function EventCard({ e, i }) {
           <span className="meta">{[formatDate(e.date), e.time, e.venue].filter(Boolean).join(' · ')}</span>
         </div>
       </Link>
-      <EditLink coll="events" id={e.id} />
+      <EditLink coll={e.legacy ? 'database' : 'events'} id={e.id} />
     </Reveal>
   )
 }
@@ -58,9 +58,9 @@ export default function Events() {
   return (
     <>
       <PageHead
-        eyebrow="Events"
-        title="Where the Governor is, and has been"
-        lead="Development tours, project launches, public participation forums and community events across the county."
+        eyebrow="Events and milestones"
+        title="The Governor at work"
+        lead="Development tours, project launches and public forums across the county, and milestones from county leadership, Parliament and the party."
       />
       <section className="wrap section-tight">
         {events.length === 0 ? (
@@ -80,7 +80,7 @@ export default function Events() {
             {upcoming.length ? (
               <div className="grid grid-3 grid-fill">{upcoming.map((e, i) => <EventCard key={e.id} e={e} i={i} />)}</div>
             ) : (
-              <p className="muted">No upcoming events are listed right now.</p>
+              <p className="muted">No upcoming events are listed right now. <Link to="/contact" className="link-arrow">Invite the Governor <span>→</span></Link></p>
             )}
             {years.map((y) => (
               <div key={y} style={{ marginTop: 56 }}>

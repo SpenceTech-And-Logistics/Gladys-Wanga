@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { defaults } from '../../data/content.js'
+import { pendingBuiltins } from '../../lib/combine.js'
 import { getDb } from '../../lib/firebase.js'
 
 const when = (ts) => {
@@ -44,28 +45,31 @@ export default function Overview({ user, onCount }) {
   if (err) return <p className="adm-alert">Could not load the overview: {err}</p>
   if (!data) return <p>Loading…</p>
 
-  const { engagements, press, positions, gallery, messages, projects, events, docs } = data
+  const { engagements, press, positions, gallery, messages, projects, docs } = data
+  // Old Engagements are part of Events now; built-in milestones count until the office removes them.
+  const savedEvents = [...data.events, ...engagements]
+  const events = [...savedEvents, ...pendingBuiltins(savedEvents, defaults.events, [...(docs.hidden?.events || []), ...(docs.hidden?.engagements || [])])]
   const profile = { ...defaults.profile, ...(docs.profile || {}) }
   const contact = { ...defaults.contact, ...(docs.contact || {}) }
   const delivery = { ...defaults.delivery, ...(docs.delivery || {}) }
   const pub = (a) => a.filter((i) => i.status !== 'draft').length
   const drafts = (a) => a.filter((i) => i.status === 'draft').length
   const unread = messages.filter((m) => !m.read)
-  const photoCount = [...engagements, ...projects, ...events].reduce((n, e) => n + (e.photos || []).length, 0) + gallery.filter((g) => g.type !== 'video').length
+  const photoCount = [...projects, ...events].reduce((n, e) => n + (e.photos || []).length, 0) + gallery.filter((g) => g.type !== 'video').length
   const today = new Date().toISOString().slice(0, 10)
   const upcoming = events.filter((e) => e.status !== 'draft' && String(e.date || '') >= today).length
   const ongoing = projects.filter((p) => p.stage === 'Ongoing').length
-  const saved = press.length + engagements.length + positions.length + gallery.length > 0
+  const saved = press.length + positions.length + gallery.length > 0
   // Until the office saves something, the built-in content (which includes one hidden draft) is what is live.
   const draftsTotal = saved
-    ? drafts(press) + drafts(engagements) + drafts(positions) + drafts(gallery)
+    ? drafts(press) + drafts(positions) + drafts(gallery)
     : defaults.press.filter((p) => p.status === 'draft').length
 
   const tiles = [
     { to: '/admin/projects', n: pub(projects), label: 'Projects on the site', sub: ongoing ? `${ongoing} ongoing` : drafts(projects) ? `${drafts(projects)} draft${drafts(projects) > 1 ? 's' : ''}` : '' },
     { to: '/admin/events', n: pub(events), label: 'Events', sub: `${upcoming} upcoming` },
     { to: '/admin/news', n: press.length ? pub(press) : defaults.press.filter((p) => p.status !== 'draft').length, label: 'News stories on the site', sub: draftsTotal ? `${draftsTotal} draft${draftsTotal > 1 ? 's' : ''} waiting` : '' },
-    { to: '/admin/engagements', n: engagements.length ? pub(engagements) : defaults.engagements.length, label: 'Engagements', sub: `${photoCount} photo${photoCount === 1 ? '' : 's'} in the gallery` },
+    { to: '/admin/positions', n: positions.length ? pub(positions) : defaults.positions.length, label: 'Positions (on About)', sub: `${photoCount} photo${photoCount === 1 ? '' : 's'} across the site` },
     { to: '/admin/messages', n: unread.length, label: 'Unread messages', sub: `${messages.length} received in total`, hot: unread.length > 0 },
   ]
 
@@ -85,9 +89,8 @@ export default function Overview({ user, onCount }) {
 
   const recent = [
     ...projects.map((i) => ({ ...i, kind: 'Project', to: `/admin/projects?edit=${i.id}`, t: i.title })),
-    ...events.map((i) => ({ ...i, kind: 'Event', to: `/admin/events?edit=${i.id}`, t: i.title })),
+    ...data.events.map((i) => ({ ...i, kind: 'Event', to: `/admin/events?edit=${i.id}`, t: i.title })),
     ...press.map((i) => ({ ...i, kind: 'News', to: '/admin/news', t: i.title })),
-    ...engagements.map((i) => ({ ...i, kind: 'Engagement', to: '/admin/engagements', t: i.title })),
     ...positions.map((i) => ({ ...i, kind: 'Position', to: '/admin/positions', t: i.title })),
     ...gallery.map((i) => ({ ...i, kind: 'Gallery', to: '/admin/gallery', t: i.title || 'Gallery item' })),
   ]

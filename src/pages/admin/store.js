@@ -4,7 +4,7 @@ import { pendingBuiltins } from '../../lib/combine.js'
 import { getDb } from '../../lib/firebase.js'
 
 /** Collections that have built-in items the office can copy in, remove or bring back. */
-export const SEEDED = { engagements: 'Engagements', press: 'News and press', positions: 'Positions', projects: 'Projects', events: 'Events' }
+export const SEEDED = { press: 'News and press', positions: 'Positions', projects: 'Projects', events: 'Events' }
 
 async function siteDoc(id) {
   const { fs, db } = await getDb()
@@ -78,4 +78,28 @@ export function fitPhotos(doc, key = 'photos', limit = 900000) {
   const overflow = []
   while (photos.length && JSON.stringify({ ...doc, [key]: photos }).length > limit) overflow.unshift(photos.pop())
   return { doc: { ...doc, [key]: photos }, overflow }
+}
+
+/** Items still saved under the old Engagements section (merged into Events). */
+export async function legacyEngagements() {
+  const { fs, db } = await getDb()
+  const snap = await fs.getDocs(fs.collection(db, 'engagements'))
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+}
+
+/** Move saved engagements into Events (category becomes the event type) and carry over removals. */
+export async function moveEngagementsToEvents() {
+  const { fs, db } = await getDb()
+  const items = await legacyEngagements()
+  for (const item of items) {
+    const { id, category, ...data } = item
+    await fs.addDoc(fs.collection(db, 'events'), { ...data, type: data.type || category || 'Other', time: data.time || '', subcounty: data.subcounty || '', video: data.video || '' })
+    await fs.deleteDoc(fs.doc(db, 'engagements', id))
+  }
+  const hidden = await readHidden()
+  if ((hidden.engagements || []).length) {
+    const events = [...new Set([...(hidden.events || []), ...hidden.engagements])]
+    await fs.setDoc(fs.doc(db, 'site', 'hidden'), { events, engagements: [] }, { merge: true })
+  }
+  return items.length
 }
