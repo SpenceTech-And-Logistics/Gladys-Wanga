@@ -8,6 +8,27 @@ export const NEWS_CATEGORIES = ['Profile', 'Press coverage', 'Statements', 'Even
 export const GALLERY_CATEGORIES = ['County', 'Community', 'Events', 'Parliament']
 export const POSITION_CATEGORIES = ['County', 'Parliament', 'Party', 'Movements']
 
+// Projects and events. The office can add more sectors, funders and event types from the dashboard;
+// those are saved in site/settings and merged with these lists (Other always stays last).
+export const PROJECT_FUNDS = ['County Government', 'National Government', 'Partners and donors']
+export const PROJECT_SECTORS = [
+  'Health', 'Education and ECDE', 'Roads and Transport', 'Water and Sanitation', 'Agriculture',
+  'Fisheries and Blue Economy', 'Trade and Markets', 'Youth and Sports', 'Gender and Social Services', 'Other',
+]
+export const STAGES = ['Completed', 'Ongoing', 'Upcoming']
+export const EVENT_TYPES = ['Development tour', 'Project launch', 'Public participation', 'Community', 'Council of Governors', 'Other']
+
+/** The lists the dashboard lets the office extend, with the site setting that stores each one. */
+export const LISTS = {
+  funds: PROJECT_FUNDS,
+  projectSectors: PROJECT_SECTORS,
+  eventTypes: EVENT_TYPES,
+  newsCategories: NEWS_CATEGORIES,
+  galleryCategories: GALLERY_CATEGORIES,
+  engagementCategories: ENGAGEMENT_CATEGORIES,
+  positionCategories: POSITION_CATEGORIES,
+}
+
 export const SITE_NAME = 'Gladys Wanga'
 export const SITE_TITLE = 'Gladys Wanga | Governor of Homa Bay County'
 
@@ -119,6 +140,7 @@ export const defaults = {
     assembly: 'Homa Bay town, Homa Bay County',
     email: '',
     phone: '',
+    whatsapp: '',
     social: [
       { label: 'Facebook', url: 'https://www.facebook.com/GladysWanga043/' },
       { label: 'X', url: 'https://x.com/gladyswanga' },
@@ -226,6 +248,11 @@ export const defaults = {
       summary: 'Biography, education and offices held.',
     },
   ],
+
+  // No verified project or event records were in the supplied sources, so these start empty.
+  // The office adds them from the dashboard (or the WhatsApp import).
+  projects: [],
+  events: [],
 
   gallery: [],
 }

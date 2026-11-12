@@ -62,6 +62,25 @@ export default function About() {
         </section>
       )}
 
+      <section className="wrap section-tight">
+        <div className="grid grid-2">
+          <Reveal>
+            <Link to="/positions" className="card card-more">
+              <span className="eyebrow">Positions</span>
+              <h3>Offices, committees and party roles</h3>
+              <span className="link-arrow">See all positions <span>→</span></span>
+            </Link>
+          </Reveal>
+          <Reveal delay={90}>
+            <Link to="/engagements" className="card card-more">
+              <span className="eyebrow">Engagements</span>
+              <h3>Milestones from county leadership, Parliament and campaigns</h3>
+              <span className="link-arrow">See all engagements <span>→</span></span>
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
       <section className="wrap section">
         <Reveal className="cta">
           <div><h2>The Governor’s office</h2><p>Its constitutional basis, its functions, and the county executive.</p></div>

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { defaults } from '../data/content.js'
+import { LISTS, defaults } from '../data/content.js'
 
-export const ContentContext = createContext({ ...defaults, live: false, refresh: () => {} })
+export const ContentContext = createContext({ ...defaults, lists: { ...LISTS, subcounties: defaults.county.subcounties }, live: false, refresh: () => {} })
 export const useContent = () => useContext(ContentContext)

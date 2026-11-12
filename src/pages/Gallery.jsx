@@ -7,7 +7,7 @@ import { videoInfo } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 
 export default function Gallery() {
-  const { gallery, engagements, press } = useContent()
+  const { gallery, engagements, press, projects, events } = useContent()
   const [cat, setCat] = useState('All')
   const [open, setOpen] = useState(-1)
 
@@ -23,9 +23,15 @@ export default function Gallery() {
     const fromEngagements = engagements.flatMap((p) =>
       (p.photos || []).map((src, i) => ({ id: `${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Engagements', src, thumb: src })),
     )
+    const fromProjects = projects.flatMap((p) =>
+      (p.photos || []).map((src, i) => ({ id: `pr-${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Projects', src, thumb: src })),
+    )
+    const fromEvents = events.flatMap((p) =>
+      (p.photos || []).map((src, i) => ({ id: `ev-${p.id}-${i}`, kind: 'photo', title: p.title, category: 'Events', src, thumb: src })),
+    )
     const fromPress = press.filter((n) => n.image).map((n) => ({ id: `press-${n.id}`, kind: 'photo', title: n.title, category: 'Press', src: n.image, thumb: n.image }))
-    return [...own, ...fromEngagements, ...fromPress].filter((i) => i.thumb || i.kind === 'video')
-  }, [gallery, engagements, press])
+    return [...own, ...fromProjects, ...fromEvents, ...fromEngagements, ...fromPress].filter((i) => i.thumb || i.kind === 'video')
+  }, [gallery, engagements, press, projects, events])
 
   const cats = ['All', ...new Set(all.map((i) => i.category).filter(Boolean))]
   const shown = cat === 'All' ? all : all.filter((i) => i.category === cat)
@@ -64,7 +70,7 @@ export default function Gallery() {
                 )
               })}
             </div>
-            <p className="note">Photos open in a larger viewer. Pictures from engagements and press are included automatically.</p>
+            <p className="note">Photos open in a larger viewer. Pictures from projects, events, engagements and press are included automatically.</p>
           </>
         )}
       </section>

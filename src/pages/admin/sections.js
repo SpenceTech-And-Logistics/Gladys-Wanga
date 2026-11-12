@@ -1,4 +1,4 @@
-import { ENGAGEMENT_CATEGORIES, GALLERY_CATEGORIES, NEWS_CATEGORIES, POSITION_CATEGORIES, defaults } from '../../data/content.js'
+import { ENGAGEMENT_CATEGORIES, GALLERY_CATEGORIES, LISTS, NEWS_CATEGORIES, POSITION_CATEGORIES, STAGES, defaults } from '../../data/content.js'
 
 const status = { key: 'status', label: 'Status', type: 'select', options: [{ value: 'published', label: 'Published' }, { value: 'draft', label: 'Draft (hidden)' }] }
 const badge = (it) => (it.status === 'draft' ? 'Draft' : 'Published')
@@ -43,6 +43,7 @@ export const contactFields = [
   { key: 'assembly', label: 'Address line (town and county)' },
   { key: 'email', label: 'Office email', type: 'email' },
   { key: 'phone', label: 'Office phone', type: 'tel' },
+  { key: 'whatsapp', label: 'Office WhatsApp number', type: 'tel', hint: 'Adds a “Chat on WhatsApp” button to the Contact page and footer. Leave blank to hide it.' },
   { key: 'social', label: 'Social links (Facebook, X, YouTube, TikTok…)', type: 'list', noun: 'link', wide: true, fields: [{ key: 'label', label: 'Name' }, { key: 'url', label: 'Link', type: 'url' }] },
   { key: 'links', label: 'Other links', type: 'list', noun: 'link', wide: true, fields: [{ key: 'label', label: 'Name' }, { key: 'url', label: 'Link', type: 'url' }] },
 ]
@@ -51,12 +52,14 @@ export const engagementsConfig = {
   seed: defaults.engagements,
   coll: 'engagements',
   title: 'Engagements',
+  filterKey: 'category',
+  viewPath: (it) => `/engagements/${it.id}`,
   blurb: 'Milestones and events: county leadership, Parliament, party and campaigns, community work. Each can have up to 5 photos, and they also appear in the Gallery.',
   noun: 'Engagement',
   empty: { title: '', category: ENGAGEMENT_CATEGORIES[0], date: '', venue: '', description: '', photos: [], status: 'published' },
   fields: [
     { key: 'title', label: 'Title', required: true, wide: true },
-    { key: 'category', label: 'Category', type: 'select', options: ENGAGEMENT_CATEGORIES },
+    { key: 'category', label: 'Category', type: 'combo', listKey: 'engagementCategories' },
     { key: 'date', label: 'Date', type: 'date' },
     { key: 'venue', label: 'Where' },
     { key: 'description', label: 'Description', type: 'textarea', wide: true, hint: 'One or two lines on what happened and why it matters.' },
@@ -89,13 +92,15 @@ export const positionsConfig = {
   seed: defaults.positions,
   coll: 'positions',
   title: 'Positions',
+  filterKey: 'category',
+  viewPath: () => '/positions',
   blurb: 'Offices, committees, party and movement roles, shown on the Positions page. Lower numbers appear first.',
   noun: 'Position',
   empty: { title: '', organisation: '', category: POSITION_CATEGORIES[0], period: '', description: '', order: 50, status: 'published' },
   fields: [
     { key: 'title', label: 'Position', required: true, wide: true },
     { key: 'organisation', label: 'Organisation' },
-    { key: 'category', label: 'Group', type: 'select', options: POSITION_CATEGORIES },
+    { key: 'category', label: 'Group', type: 'combo', listKey: 'positionCategories', noun: 'group' },
     { key: 'period', label: 'When (e.g. 2022 to present)' },
     { key: 'order', label: 'Order on the page', type: 'number' },
     { key: 'description', label: 'Short description', type: 'textarea', wide: true },
@@ -113,6 +118,8 @@ export const pressConfig = {
   seed: defaults.press,
   coll: 'press',
   title: 'News and press',
+  filterKey: 'category',
+  viewPath: () => '/news',
   blurb: 'Profiles, press coverage and statements. Each item links to the original article. Items marked Draft stay hidden from the public site until published.',
   noun: 'Story',
   empty: { title: '', outlet: '', date: '', url: '', category: NEWS_CATEGORIES[1], summary: '', image: '', status: 'published' },
@@ -120,7 +127,7 @@ export const pressConfig = {
     { key: 'title', label: 'Headline', required: true, wide: true },
     { key: 'outlet', label: 'Outlet or source' },
     { key: 'date', label: 'Date', type: 'date' },
-    { key: 'category', label: 'Category', type: 'select', options: NEWS_CATEGORIES },
+    { key: 'category', label: 'Category', type: 'combo', listKey: 'newsCategories' },
     { key: 'url', label: 'Link to the article', type: 'url' },
     { key: 'summary', label: 'Short summary', type: 'textarea', wide: true },
     { key: 'image', label: 'Photo', type: 'image', wide: true, hint: 'Also appears in the Gallery.' },
@@ -151,13 +158,16 @@ export const pressConfig = {
 export const galleryConfig = {
   coll: 'gallery',
   title: 'Gallery',
-  blurb: 'Standalone photos and videos. Project photos and news photos appear here automatically.',
+  filterKey: 'category',
+  bulk: true,
+  viewPath: () => '/gallery',
+  blurb: 'Standalone photos and videos. Photos from projects, events, engagements and news appear in the public gallery automatically. Use “Add many photos” to upload a batch at once.',
   noun: 'Item',
   empty: { type: 'photo', title: '', category: GALLERY_CATEGORIES[0], src: '', url: '', status: 'published' },
   fields: [
     { key: 'type', label: 'Type', type: 'select', options: [{ value: 'photo', label: 'Photo' }, { value: 'video', label: 'Video link' }] },
     { key: 'title', label: 'Caption' },
-    { key: 'category', label: 'Category', type: 'select', options: GALLERY_CATEGORIES, showIf: (f) => f.type !== 'video' },
+    { key: 'category', label: 'Category', type: 'combo', listKey: 'galleryCategories', showIf: (f) => f.type !== 'video' },
     { key: 'src', label: 'Photo', type: 'image', wide: true, showIf: (f) => f.type !== 'video' },
     { key: 'url', label: 'Video link', type: 'url', wide: true, hint: 'YouTube, Google Drive, Facebook or TikTok. YouTube thumbnails are automatic.', showIf: (f) => f.type === 'video' },
     status,
@@ -169,6 +179,118 @@ export const galleryConfig = {
     { key: 'status', label: 'Status', render: badge },
   ],
 }
+
+const video = { key: 'video', label: 'Video link (optional)', type: 'url', wide: true, hint: 'YouTube, Facebook, TikTok or Google Drive. YouTube and Drive videos play on the page.' }
+const subcounty = { key: 'subcounty', label: 'Sub-county', type: 'combo', listKey: 'subcounties', allowNew: false, blank: '— Not set —' }
+
+export const projectsConfig = {
+  seed: defaults.projects,
+  coll: 'projects',
+  title: 'Projects',
+  blurb: 'Completed, ongoing and upcoming projects, shown on the Projects page by funder and sector. Up to 6 photos each; they also appear in the Gallery. Keep amounts in the description if you want them mentioned.',
+  noun: 'Project',
+  tabKey: 'fund',
+  tabList: 'funds',
+  filterKey: 'sector',
+  viewPath: (it) => `/projects/${it.id}`,
+  empty: { title: '', fund: LISTS.funds[0], sector: LISTS.projectSectors[0], stage: 'Completed', subcounty: '', ward: '', year: String(new Date().getFullYear()), description: '', photos: [], video: '', status: 'published' },
+  fields: [
+    { key: 'title', label: 'Project name', required: true, wide: true },
+    { key: 'fund', label: 'Funded by', type: 'combo', listKey: 'funds', noun: 'funder' },
+    { key: 'sector', label: 'Sector', type: 'combo', listKey: 'projectSectors', noun: 'sector' },
+    { key: 'stage', label: 'Status', type: 'select', options: STAGES },
+    subcounty,
+    { key: 'ward', label: 'Ward' },
+    { key: 'year', label: 'Year (e.g. 2025 or 2024/25)' },
+    { key: 'description', label: 'Description', type: 'textarea', rows: 6, wide: true, hint: 'What was done, where, and who benefits. Leave a blank line between paragraphs.' },
+    { key: 'photos', label: 'Photos (the first is the cover)', type: 'images', max: 6, side: 1000, wide: true },
+    video,
+    status,
+  ],
+  columns: [
+    { key: 'title', label: 'Project' },
+    { key: 'fund', label: 'Funded by' },
+    { key: 'sector', label: 'Sector' },
+    { key: 'stage', label: 'Status' },
+    { key: 'photos', label: 'Photos', render: (it) => (it.photos || []).length },
+    { key: 'status', label: 'On site', render: badge },
+  ],
+  importer: {
+    columns: ['title', 'fund', 'sector', 'stage', 'subcounty', 'ward', 'year', 'description'],
+    example: ['Rangwe Level 4 maternity wing', 'County Government', 'Health', 'Ongoing', 'Rangwe', 'Kagan', '2025', 'A new maternity wing with 40 beds.'],
+    map: (r) => ({
+      title: String(r.title || '').trim(),
+      fund: String(r.fund || LISTS.funds[0]),
+      sector: String(r.sector || 'Other'),
+      stage: STAGES.includes(r.stage) ? r.stage : 'Completed',
+      subcounty: String(r.subcounty || ''),
+      ward: String(r.ward || ''),
+      year: String(r.year || ''),
+      description: String(r.description || ''),
+      photos: [],
+      video: '',
+      status: 'published',
+    }),
+  },
+}
+
+export const eventsConfig = {
+  seed: defaults.events,
+  coll: 'events',
+  title: 'Events',
+  blurb: 'Tours, launches and public forums. Events dated today or later show as Upcoming; the rest are listed by year with their photos.',
+  noun: 'Event',
+  filterKey: 'type',
+  viewPath: (it) => `/events/${it.id}`,
+  empty: { title: '', type: LISTS.eventTypes[0], date: '', time: '', venue: '', subcounty: '', description: '', photos: [], video: '', status: 'published' },
+  fields: [
+    { key: 'title', label: 'Event', required: true, wide: true },
+    { key: 'type', label: 'Type', type: 'combo', listKey: 'eventTypes', noun: 'type' },
+    { key: 'date', label: 'Date', type: 'date' },
+    { key: 'time', label: 'Time (e.g. 10:00 am)' },
+    { key: 'venue', label: 'Where' },
+    subcounty,
+    { key: 'description', label: 'Description', type: 'textarea', rows: 5, wide: true },
+    { key: 'photos', label: 'Photos (the first is the cover)', type: 'images', max: 6, side: 1000, wide: true },
+    video,
+    status,
+  ],
+  columns: [
+    { key: 'title', label: 'Event' },
+    { key: 'type', label: 'Type' },
+    { key: 'date', label: 'Date' },
+    { key: 'photos', label: 'Photos', render: (it) => (it.photos || []).length },
+    { key: 'status', label: 'On site', render: badge },
+  ],
+  importer: {
+    columns: ['title', 'type', 'date', 'time', 'venue', 'subcounty', 'description'],
+    example: ['Budget public participation forum', 'Public participation', '2026-12-02', '10:00 am', 'Homa Bay town hall', 'Homa Bay Town', 'Residents give views on the county budget.'],
+    map: (r) => ({
+      title: String(r.title || '').trim(),
+      type: String(r.type || 'Other'),
+      date: String(r.date || ''),
+      time: String(r.time || ''),
+      venue: String(r.venue || ''),
+      subcounty: String(r.subcounty || ''),
+      description: String(r.description || ''),
+      photos: [],
+      video: '',
+      status: 'published',
+    }),
+  },
+}
+
+/** Lists the office can edit on the Categories screen. */
+export const listFields = [
+  { key: 'funds', label: 'Project funders (tabs on the Projects page)', type: 'strings', wide: true },
+  { key: 'projectSectors', label: 'Project sectors', type: 'strings', wide: true },
+  { key: 'eventTypes', label: 'Event types', type: 'strings', wide: true },
+  { key: 'newsCategories', label: 'News categories', type: 'strings', wide: true },
+  { key: 'galleryCategories', label: 'Gallery categories', type: 'strings', wide: true },
+  { key: 'engagementCategories', label: 'Engagement categories', type: 'strings', wide: true },
+  { key: 'positionCategories', label: 'Position groups', type: 'strings', wide: true },
+]
+export const listDefaults = LISTS
 
 export const profileDefaults = defaults.profile
 export const deliveryDefaults = defaults.delivery

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import PageHead from '../components/PageHead.jsx'
 import Placeholder from '../components/Placeholder.jsx'
 import { Reveal } from '../components/Reveal.jsx'
+import { EditLink } from '../components/AdminBar.jsx'
+import ShareWhatsApp from '../components/ShareWhatsApp.jsx'
 import { formatDate } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 
@@ -31,7 +33,11 @@ export default function News() {
               <span className="meta">{meta(first)}</span>
               <h2 style={{ font: '500 clamp(26px,3vw,36px)/1.15 var(--serif)' }}>{first.title}</h2>
               {first.summary && <p className="muted" style={{ lineHeight: 1.6 }}>{first.summary}</p>}
-              {first.url && <a href={first.url} target="_blank" rel="noreferrer" className="link-arrow">Read the story <span>→</span></a>}
+              <div className="detail-actions">
+                {first.url && <a href={first.url} target="_blank" rel="noreferrer" className="link-arrow">Read the story <span>→</span></a>}
+                <ShareWhatsApp title={first.title} path={first.url ? undefined : '/news'} className="sm" />
+                <EditLink coll="press" id={first.id} />
+              </div>
             </div>
           </Reveal>
         )}
@@ -44,7 +50,11 @@ export default function News() {
                   <span className="meta">{meta(n)}</span>
                   <h3 style={{ fontSize: 22, marginTop: 4 }}>{n.title}</h3>
                 </div>
-                {n.url && <a href={n.url} target="_blank" rel="noreferrer" className="link-arrow">Open <span>→</span></a>}
+                <div className="detail-actions">
+                  {n.url && <a href={n.url} target="_blank" rel="noreferrer" className="link-arrow">Open <span>→</span></a>}
+                  <ShareWhatsApp title={n.title} path="/news" className="sm icon-only" />
+                  <EditLink coll="press" id={n.id} />
+                </div>
               </Reveal>
             ))}
           </div>

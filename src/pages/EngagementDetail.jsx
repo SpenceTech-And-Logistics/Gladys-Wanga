@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Lightbox from '../components/Lightbox.jsx'
 import { Reveal } from '../components/Reveal.jsx'
+import { EditLink } from '../components/AdminBar.jsx'
+import ShareWhatsApp from '../components/ShareWhatsApp.jsx'
 import { formatDate } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 import NotFound from './NotFound.jsx'
@@ -28,6 +30,10 @@ export default function EngagementDetail() {
         <Link to="/engagements" className="link-arrow rise" style={{ '--d': '0ms' }}>← All engagements</Link>
         <h1 className="rise" style={{ '--d': '80ms', marginTop: 20 }}>{item.title}</h1>
         {item.description && <p className="lead rise" style={{ '--d': '160ms' }}>{item.description}</p>}
+        <div className="detail-actions rise" style={{ '--d': '220ms' }}>
+          <ShareWhatsApp title={item.title} path={`/engagements/${item.id}`} />
+          <EditLink coll="engagements" id={item.id} label="Edit in dashboard" />
+        </div>
       </section>
       <section className="wrap section-tight">
         <Reveal className="glance">

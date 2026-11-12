@@ -14,6 +14,11 @@ import Delivery from './pages/Delivery.jsx'
 import Positions from './pages/Positions.jsx'
 import EngagementDetail from './pages/EngagementDetail.jsx'
 import Engagements from './pages/Engagements.jsx'
+import Events, { EventDetail } from './pages/Events.jsx'
+import ProjectDetail from './pages/ProjectDetail.jsx'
+import Projects from './pages/Projects.jsx'
+import AdminBar from './components/AdminBar.jsx'
+import AdminProvider from './components/AdminProvider.jsx'
 
 // The dashboard (and Firebase Auth) is only downloaded when someone opens /admin.
 const AdminApp = lazy(() => import('./pages/admin/AdminApp.jsx'))
@@ -24,6 +29,8 @@ const TITLES = {
   '/county': 'Homa Bay County',
   '/positions': 'Positions',
   '/engagements': 'Engagements',
+  '/projects': 'Projects',
+  '/events': 'Events',
   '/news': 'News',
   '/gallery': 'Gallery',
   '/contact': 'Contact',
@@ -35,7 +42,7 @@ function Layout() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const section = TITLES[pathname] || (pathname.startsWith('/engagements/') ? 'Engagement' : '')
+    const section = TITLES[pathname] || (pathname.startsWith('/engagements/') ? 'Engagement' : pathname.startsWith('/projects/') ? 'Project' : pathname.startsWith('/events/') ? 'Event' : '')
     document.title = section
       ? `${section} | Gladys Wanga, Governor of Homa Bay County`
       : 'Gladys Wanga | Governor of Homa Bay County'
@@ -47,7 +54,7 @@ function Layout() {
   })
 
   return (
-    <>
+    <AdminProvider>
       <a href="#content" className="skip">Skip to content</a>
       <div className="scroll-progress" ref={bar} aria-hidden="true" />
       <Navbar />
@@ -55,7 +62,8 @@ function Layout() {
         <Outlet />
       </main>
       <Footer />
-    </>
+      <AdminBar />
+    </AdminProvider>
   )
 }
 
@@ -70,6 +78,10 @@ export default function App() {
         <Route path="positions" element={<Positions />} />
         <Route path="engagements" element={<Engagements />} />
         <Route path="engagements/:id" element={<EngagementDetail />} />
+        <Route path="projects" element={<Projects />} />
+        <Route path="projects/:id" element={<ProjectDetail />} />
+        <Route path="events" element={<Events />} />
+        <Route path="events/:id" element={<EventDetail />} />
         <Route path="news" element={<News />} />
         <Route path="gallery" element={<Gallery />} />
         <Route path="contact" element={<Contact />} />

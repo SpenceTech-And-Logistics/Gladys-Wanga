@@ -27,7 +27,7 @@ export const fs = {
   doc,
   getDocs: async (c) => ({ docs: [...store.keys()].filter((k) => k.startsWith(`${c.name}/`)).map(snapOf) }),
   getDoc: async (d) => (d.path === 'admins/demo' ? { exists: () => true, data: () => ({ ok: true }) } : snapOf(d.path)),
-  setDoc: async (d, data) => put(d.path, data),
+  setDoc: async (d, data, opts) => put(d.path, opts?.merge ? { ...store.get(d.path), ...data } : data),
   updateDoc: async (d, data) => put(d.path, { ...store.get(d.path), ...data }),
   addDoc: async (c, data) => { const id = `n${++counter}`; put(`${c.name}/${id}`, data); return { id } },
   deleteDoc: async (d) => store.delete(d.path),

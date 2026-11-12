@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { defaults } from '../data/content.js'
+import { LISTS, defaults } from '../data/content.js'
+import { combine, mergeList } from './combine.js'
 import { getDb } from './firebase.js'
 import { ContentContext } from './useContent.js'
 
@@ -15,6 +16,8 @@ function merge(base, over) {
 const byOrder = (a, b) => Number(a.order ?? 999) - Number(b.order ?? 999)
 const byDateDesc = (a, b) => String(b.date || b.year || '').localeCompare(String(a.date || a.year || ''))
 
+const COLLECTIONS = ['engagements', 'press', 'gallery', 'positions', 'projects', 'events']
+
 export function ContentProvider({ children }) {
   const [remote, setRemote] = useState(null)
   const [tick, setTick] = useState(0)
@@ -26,13 +29,20 @@ export function ContentProvider({ children }) {
       const kit = await getDb()
       if (!kit) return
       const { fs, db } = kit
+      const list = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }))
       try {
-        const [site, engagements, press, gallery, positions] = await Promise.all(
-          ['site', 'engagements', 'press', 'gallery', 'positions'].map((c) => fs.getDocs(fs.collection(db, c))),
-        )
-        const list = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+        const site = await fs.getDocs(fs.collection(db, 'site'))
         const docs = Object.fromEntries(site.docs.map((d) => [d.id, d.data()]))
-        if (alive) setRemote({ docs, engagements: list(engagements), press: list(press), gallery: list(gallery), positions: list(positions) })
+        // Each collection loads on its own, so one missing rule does not blank the whole site.
+        const lists = await Promise.all(
+          COLLECTIONS.map((c) =>
+            fs.getDocs(fs.collection(db, c)).then(list, (err) => {
+              console.warn(`Could not load “${c}” from Firebase; showing built-in content for it.`, err)
+              return []
+            }),
+          ),
+        )
+        if (alive) setRemote({ docs, ...Object.fromEntries(COLLECTIONS.map((c, i) => [c, lists[i]])) })
       } catch (err) {
         console.warn('Could not load content from Firebase; showing built-in content.', err)
       }
@@ -44,20 +54,27 @@ export function ContentProvider({ children }) {
 
   const value = useMemo(() => {
     const r = remote
+    const hidden = r?.docs.hidden || {}
+    const settings = r?.docs.settings || {}
     const published = (items) => items.filter((i) => i.status !== 'draft')
-    const engagements = r && r.engagements.length ? published(r.engagements).sort(byDateDesc) : published(defaults.engagements).sort(byDateDesc)
-    const press = r && r.press.length ? published(r.press).sort(byDateDesc) : published(defaults.press)
-    const gallery = r && r.gallery.length ? published(r.gallery) : defaults.gallery
-    const positions = r && r.positions.length ? published(r.positions).sort(byOrder) : published(defaults.positions).sort(byOrder)
+    const pick = (c) => published(combine(r?.[c] || [], defaults[c] || [], hidden[c]))
+    // A list saved from the dashboard replaces the default one, so the office can also remove or rename entries.
+    const lists = Object.fromEntries(Object.entries(LISTS).map(([k, base]) => [k, mergeList(settings[k]?.length ? settings[k] : base)]))
+    const county = merge(defaults.county, r?.docs.county)
+    lists.subcounties = county.subcounties || []
+
     return {
-      positions,
+      positions: pick('positions').sort(byOrder),
+      engagements: pick('engagements').sort(byDateDesc),
+      press: pick('press').sort(byDateDesc),
+      gallery: pick('gallery'),
+      projects: pick('projects').sort(byDateDesc),
+      events: pick('events').sort(byDateDesc),
       profile: merge(defaults.profile, r?.docs.profile),
       delivery: merge(defaults.delivery, r?.docs.delivery),
-      county: merge(defaults.county, r?.docs.county),
+      county,
       contact: merge(defaults.contact, r?.docs.contact),
-      engagements,
-      press,
-      gallery,
+      lists,
       live: Boolean(r),
       refresh,
     }

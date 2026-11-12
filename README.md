@@ -36,6 +36,18 @@ The built-in content comes only from these public sources. Anything they did not
 
 Once Firebase is connected, anything saved in the dashboard replaces the built-in version.
 
+## Dashboard features
+- **Projects** and **Events**: public pages at `/projects` (tabs by funder, sector chips, status and sub-county filters) and `/events` (upcoming, then past events by year), each with a detail page, photos, optional video and a Share on WhatsApp button.
+- **Import from WhatsApp** (`/admin/whatsapp`): drop the zip or photos the team sent and paste their note (“-ward…”, “-stretch of…”, “-works done…”). The form fills itself in; pick the cover and save as a project, event or news story. Extra photos go to the Gallery. Videos are skipped (paste a YouTube/Facebook link instead).
+- **Categories** (`/admin/categories`): funders, sectors, event types and other lists. “＋ Add a new…” in any form also adds to these.
+- **Filters** on every list: tabs, category chips, search, Published/Draft/Built-in.
+- **Add many photos** to the Gallery in one go.
+- **Fill the database** (`/admin/database`): copies built-in content into Firebase. Anything the office deletes is remembered in `site/hidden` and does not come back.
+- **Site ↔ dashboard links**: “Office sign in” in the footer; after an administrator signs in, the public site shows an “Edit this page / Dashboard / + Add” bar and Edit buttons on projects, events and news. Every dashboard section has “See this on the website” and per-item View links.
+- **Office WhatsApp number** (Contact and social links): shows a Chat on WhatsApp button on the Contact page and footer.
+
+After pulling these changes, **republish `firestore.rules`** in the Firebase console (it now includes `projects` and `events`).
+
 ## Firebase setup (free Spark plan, no Storage needed)
 1. Firebase console: create a project, then Build, Firestore Database, create (production mode).
 2. Build, Authentication, Sign-in method: enable **Email/Password**. Add the office users under Users.

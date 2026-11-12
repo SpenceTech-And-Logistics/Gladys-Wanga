@@ -41,3 +41,12 @@ export const formatDate = (d) => {
 }
 
 export const money = (n) => (n ? `KES ${Number(n).toLocaleString('en-KE')}` : '')
+
+/** A Kenyan phone number as WhatsApp wants it (2547…), or '' when there is none. */
+export function waNumber(raw = '') {
+  let d = String(raw).replace(/\D/g, '')
+  if (!d) return ''
+  if (d.startsWith('0')) d = `254${d.slice(1)}`
+  else if (d.length === 9) d = `254${d}`
+  return d.length >= 11 ? d : ''
+}

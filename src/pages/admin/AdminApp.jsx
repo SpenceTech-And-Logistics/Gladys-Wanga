@@ -5,24 +5,38 @@ import CollectionEditor from './CollectionEditor.jsx'
 import DocEditor from './DocEditor.jsx'
 import Messages from './Messages.jsx'
 import Overview from './Overview.jsx'
+import SyncPage from './SyncPage.jsx'
+import WhatsAppImport from './WhatsAppImport.jsx'
+import { rememberAdmin } from '../../lib/useAdmin.js'
 import {
-  deliveryDefaults, deliveryFields, countyDefaults, countyFields, contactDefaults, contactFields, engagementsConfig, galleryConfig,
-  positionsConfig, pressConfig, profileDefaults, profileFields,
+  deliveryDefaults, deliveryFields, countyDefaults, countyFields, contactDefaults, contactFields, engagementsConfig, eventsConfig, galleryConfig,
+  listDefaults, listFields, positionsConfig, pressConfig, profileDefaults, profileFields, projectsConfig,
 } from './sections.js'
 import '../../styles/admin.css'
 
 const NAV = [
   ['overview', 'Overview'],
-  ['profile', 'Profile and career'],
-  ['office', 'The Governor’s office'],
-  ['county', 'Homa Bay County'],
-  ['positions', 'Positions'],
-  ['engagements', 'Engagements'],
+  ['whatsapp', 'Import from WhatsApp'],
+  ['projects', 'Projects'],
+  ['events', 'Events'],
   ['news', 'News and press'],
   ['gallery', 'Gallery'],
   ['messages', 'Messages'],
+  ['profile', 'Profile and career'],
+  ['office', 'The Governor’s office'],
+  ['county', 'Homa Bay County'],
+  ['engagements', 'Engagements'],
+  ['positions', 'Positions'],
   ['contact', 'Contact and social links'],
+  ['categories', 'Categories'],
+  ['database', 'Fill the database'],
 ]
+
+/** The public page each dashboard section changes. */
+const SITE_PATH = {
+  overview: '/', profile: '/about', office: '/delivery', county: '/county', projects: '/projects', events: '/events', news: '/news',
+  gallery: '/gallery', engagements: '/engagements', positions: '/positions', contact: '/contact',
+}
 
 function authMessage(code = '') {
   if (/invalid-credential|wrong-password|user-not-found|invalid-email/.test(code)) return 'The email or password is incorrect.'
@@ -97,6 +111,7 @@ export default function AdminApp() {
       setKit(k)
       off = k.fa.onAuthStateChanged(k.auth, async (u) => {
         if (!u) {
+          rememberAdmin(false)
           setUser(null)
           setStatus('out')
           return
@@ -105,7 +120,9 @@ export default function AdminApp() {
         try {
           const { fs, db } = await getDb()
           const snap = await fs.getDoc(fs.doc(db, 'admins', u.uid))
-          setStatus(snap.exists() && snap.data().ok === true ? 'in' : 'noaccess')
+          const ok = snap.exists() && snap.data().ok === true
+          rememberAdmin(ok)
+          setStatus(ok ? 'in' : 'noaccess')
         } catch {
           setStatus('noaccess')
         }
@@ -188,6 +205,21 @@ export default function AdminApp() {
     case 'engagements':
       body = <CollectionEditor {...engagementsConfig} />
       break
+    case 'projects':
+      body = <CollectionEditor {...projectsConfig} />
+      break
+    case 'events':
+      body = <CollectionEditor {...eventsConfig} />
+      break
+    case 'whatsapp':
+      body = <WhatsAppImport />
+      break
+    case 'categories':
+      body = <DocEditor docId="settings" title="Categories" blurb="The lists used across the site: project funders and sectors, event types, and news, gallery and engagement categories. Add, rename, reorder or remove entries. Anything typed with “Add a new…” in a form also lands here." fields={listFields} defaults={listDefaults} />
+      break
+    case 'database':
+      body = <SyncPage />
+      break
     default:
       body = <Overview user={user} onCount={setUnread} />
   }
@@ -211,6 +243,9 @@ export default function AdminApp() {
         </div>
       </aside>
       <main className="adm-main" key={section}>
+        {SITE_PATH[section] && (
+          <Link className="adm-onsite" to={SITE_PATH[section]} target="_blank">See this on the website ↗</Link>
+        )}
         {body}
         <p className="adm-credit">Built by SpenceTec and Logistics Limited</p>
       </main>

@@ -13,7 +13,7 @@ const when = (ts) => {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-const COLLS = ['engagements', 'press', 'positions', 'gallery', 'messages']
+const COLLS = ['engagements', 'press', 'positions', 'gallery', 'messages', 'projects', 'events']
 
 /** The dashboard's home screen: counts, what needs attention, and the latest messages and changes. */
 export default function Overview({ user, onCount }) {
@@ -26,10 +26,11 @@ export default function Overview({ user, onCount }) {
       try {
         const { fs, db } = await getDb()
         const read = async (c) => (await fs.getDocs(fs.collection(db, c))).docs.map((d) => ({ id: d.id, ...d.data() }))
-        const [engagements, press, positions, gallery, messages, site] = await Promise.all([...COLLS.map(read), read('site')])
+        const safe = (c) => read(c).catch(() => [])
+        const [engagements, press, positions, gallery, messages, projects, events, site] = await Promise.all([...COLLS.map(safe), read('site')])
         const docs = Object.fromEntries(site.map((d) => [d.id, d]))
         if (!alive) return
-        setData({ engagements, press, positions, gallery, messages, docs })
+        setData({ engagements, press, positions, gallery, messages, projects, events, docs })
         onCount?.(messages.filter((m) => !m.read).length)
       } catch (e) {
         if (alive) setErr(e.message)
@@ -43,14 +44,17 @@ export default function Overview({ user, onCount }) {
   if (err) return <p className="adm-alert">Could not load the overview: {err}</p>
   if (!data) return <p>Loading…</p>
 
-  const { engagements, press, positions, gallery, messages, docs } = data
+  const { engagements, press, positions, gallery, messages, projects, events, docs } = data
   const profile = { ...defaults.profile, ...(docs.profile || {}) }
   const contact = { ...defaults.contact, ...(docs.contact || {}) }
   const delivery = { ...defaults.delivery, ...(docs.delivery || {}) }
   const pub = (a) => a.filter((i) => i.status !== 'draft').length
   const drafts = (a) => a.filter((i) => i.status === 'draft').length
   const unread = messages.filter((m) => !m.read)
-  const photoCount = engagements.reduce((n, e) => n + (e.photos || []).length, 0) + gallery.filter((g) => g.type !== 'video').length
+  const photoCount = [...engagements, ...projects, ...events].reduce((n, e) => n + (e.photos || []).length, 0) + gallery.filter((g) => g.type !== 'video').length
+  const today = new Date().toISOString().slice(0, 10)
+  const upcoming = events.filter((e) => e.status !== 'draft' && String(e.date || '') >= today).length
+  const ongoing = projects.filter((p) => p.stage === 'Ongoing').length
   const saved = press.length + engagements.length + positions.length + gallery.length > 0
   // Until the office saves something, the built-in content (which includes one hidden draft) is what is live.
   const draftsTotal = saved
@@ -58,9 +62,10 @@ export default function Overview({ user, onCount }) {
     : defaults.press.filter((p) => p.status === 'draft').length
 
   const tiles = [
+    { to: '/admin/projects', n: pub(projects), label: 'Projects on the site', sub: ongoing ? `${ongoing} ongoing` : drafts(projects) ? `${drafts(projects)} draft${drafts(projects) > 1 ? 's' : ''}` : '' },
+    { to: '/admin/events', n: pub(events), label: 'Events', sub: `${upcoming} upcoming` },
     { to: '/admin/news', n: press.length ? pub(press) : defaults.press.filter((p) => p.status !== 'draft').length, label: 'News stories on the site', sub: draftsTotal ? `${draftsTotal} draft${draftsTotal > 1 ? 's' : ''} waiting` : '' },
     { to: '/admin/engagements', n: engagements.length ? pub(engagements) : defaults.engagements.length, label: 'Engagements', sub: `${photoCount} photo${photoCount === 1 ? '' : 's'} in the gallery` },
-    { to: '/admin/positions', n: positions.length ? pub(positions) : defaults.positions.length, label: 'Positions listed', sub: '' },
     { to: '/admin/messages', n: unread.length, label: 'Unread messages', sub: `${messages.length} received in total`, hot: unread.length > 0 },
   ]
 
@@ -71,12 +76,16 @@ export default function Overview({ user, onCount }) {
     { ok: Boolean(contact.phone), text: 'Add the office phone number', to: '/admin/contact' },
     { ok: (profile.education || []).length > 0, text: 'Review education and qualifications', to: '/admin/profile' },
     { ok: seatsNamed >= delivery.exec.length, text: `Name the county executive members (${seatsNamed} of ${delivery.exec.length} named)`, to: '/admin/office' },
-    { ok: photoCount > 0, text: 'Upload photos for engagements or the gallery', to: '/admin/engagements' },
+    { ok: projects.length > 0, text: 'Add the first project (try “Import from WhatsApp”)', to: '/admin/whatsapp' },
+    { ok: events.length > 0, text: 'List an upcoming or recent event', to: '/admin/events' },
+    { ok: photoCount > 0, text: 'Upload photos for projects, events or the gallery', to: '/admin/gallery' },
     { ok: draftsTotal === 0, text: draftsTotal ? `Review and publish the ${draftsTotal} draft${draftsTotal > 1 ? 's' : ''} waiting` : 'No drafts waiting', to: '/admin/news' },
   ]
   const done = checks.filter((c) => c.ok).length
 
   const recent = [
+    ...projects.map((i) => ({ ...i, kind: 'Project', to: `/admin/projects?edit=${i.id}`, t: i.title })),
+    ...events.map((i) => ({ ...i, kind: 'Event', to: `/admin/events?edit=${i.id}`, t: i.title })),
     ...press.map((i) => ({ ...i, kind: 'News', to: '/admin/news', t: i.title })),
     ...engagements.map((i) => ({ ...i, kind: 'Engagement', to: '/admin/engagements', t: i.title })),
     ...positions.map((i) => ({ ...i, kind: 'Position', to: '/admin/positions', t: i.title })),
@@ -96,8 +105,10 @@ export default function Overview({ user, onCount }) {
           <p>Signed in as {user?.email}. Everything saved here appears on the public site straight away.</p>
         </div>
         <div className="adm-actions">
-          <Link to="/admin/news" className="adm-btn">Add a news story</Link>
-          <Link to="/admin/engagements" className="adm-btn ghost">Add an engagement</Link>
+          <Link to="/admin/whatsapp" className="adm-btn">Import from WhatsApp</Link>
+          <Link to="/admin/projects?new=1" className="adm-btn ghost">Add a project</Link>
+          <Link to="/admin/events?new=1" className="adm-btn ghost">Add an event</Link>
+          <Link to="/admin/news?new=1" className="adm-btn ghost">Add a news story</Link>
         </div>
       </div>
 

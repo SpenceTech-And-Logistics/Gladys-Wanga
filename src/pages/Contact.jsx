@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import PageHead from '../components/PageHead.jsx'
 import { Reveal } from '../components/Reveal.jsx'
+import { WaIcon } from '../components/ShareWhatsApp.jsx'
 import { firebaseReady, getDb } from '../lib/firebase.js'
+import { waNumber } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 
 const TOPICS = ['County services', 'Petition or public participation', 'Invitation or event', 'Media request', 'Other']
@@ -44,6 +46,7 @@ export default function Contact() {
     ['Email', contact.email],
     ['Phone', contact.phone],
   ]
+  const wa = waNumber(contact.whatsapp)
   const links = [...(contact.social || []), ...(contact.links || [])].filter((l) => l.url)
 
   return (
@@ -94,6 +97,11 @@ export default function Contact() {
                   <div key={k}><dt>{k}</dt><dd className={v ? '' : 'pending'}>{v || 'To be announced'}</dd></div>
                 ))}
               </dl>
+              {wa && (
+                <a className="btn btn-wa" href={`https://wa.me/${wa}`} target="_blank" rel="noreferrer" style={{ marginTop: 22 }}>
+                  <WaIcon /> Chat with the office on WhatsApp
+                </a>
+              )}
             </div>
             {links.length > 0 && (
               <div className="panel">

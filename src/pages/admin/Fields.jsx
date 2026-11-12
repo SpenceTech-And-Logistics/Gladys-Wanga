@@ -61,9 +61,10 @@ export function Field({ def, value, onChange }) {
         {options.map((o) => <option key={o.value ?? o} value={o.value ?? o}>{o.label ?? o}</option>)}
       </select>,
     )
+  if (type === 'combo') return wrap(<Combo def={def} value={value} onChange={onChange} />)
   if (type === 'number') return wrap(<input type="number" min="0" value={value ?? 0} onChange={(e) => onChange(e.target.value === '' ? 0 : Number(e.target.value))} />)
   if (type === 'image') return wrap(<ImageInput value={value} onChange={onChange} side={def.side || 1000} />)
-  if (type === 'images') return wrap(<ImageInput value={value} onChange={onChange} multiple max={def.max || 6} />)
+  if (type === 'images') return wrap(<ImageInput value={value} onChange={onChange} multiple max={def.max || 6} side={def.side || 1100} />)
   if (type === 'strings') return wrap(<StringList value={value} onChange={onChange} long={def.long} />)
   if (type === 'list') return wrap(<ObjectList def={def} value={value} onChange={onChange} />)
   if (type === 'group')
@@ -119,5 +120,34 @@ function ObjectList({ def, value, onChange }) {
       ))}
       <button type="button" className="adm-add" onClick={() => onChange([...list, blank(def.fields)])}>+ Add {def.noun || 'row'}</button>
     </div>
+  )
+}
+
+/** A dropdown of the current list, with "Add new…" for a value that is not there yet. */
+function Combo({ def, value, onChange }) {
+  const options = def.options || []
+  const known = !value || options.includes(value)
+  const [typing, setTyping] = useState(!known)
+  if (typing && def.allowNew !== false)
+    return (
+      <div className="adm-row">
+        <input value={value ?? ''} onChange={(e) => onChange(e.target.value)} placeholder={`New ${def.noun || 'category'}`} autoFocus />
+        <button type="button" className="adm-add" onClick={() => { setTyping(false); onChange(options[0] || '') }}>Choose from list</button>
+      </div>
+    )
+  return (
+    <select
+      value={value ?? ''}
+      onChange={(e) => {
+        if (e.target.value === '__new') {
+          setTyping(true)
+          onChange('')
+        } else onChange(e.target.value)
+      }}
+    >
+      {def.blank && <option value="">{def.blank}</option>}
+      {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      {def.allowNew !== false && <option value="__new">＋ Add a new {def.noun || 'category'}…</option>}
+    </select>
   )
 }
