@@ -1,0 +1,60 @@
+import { useState } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import Crest from './Crest.jsx'
+import { useScroll } from '../lib/hooks.js'
+
+const links = [
+  ['/', 'Home'],
+  ['/about', 'About'],
+  ['/delivery', 'The Office'],
+  ['/county', 'The County'],
+  ['/positions', 'Positions'],
+  ['/engagements', 'Engagements'],
+  ['/news', 'News'],
+  ['/gallery', 'Gallery'],
+  ['/contact', 'Contact'],
+]
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  useScroll((y) => setScrolled(y > 24))
+  const close = () => setOpen(false)
+
+  return (
+    <header className={`site-header ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
+      <div className="wrap site-header-in">
+        <Link to="/" className="brand" onClick={close} aria-label="Gladys Wanga, home">
+          <Crest size={44} />
+          <span className="brand-name">
+            Gladys Wanga
+            <br />
+            <small>Governor, Homa Bay County</small>
+          </span>
+        </Link>
+        <nav className="nav" id="main-nav" aria-label="Main">
+          {links.map(([to, label]) => (
+            <NavLink key={to} to={to} end={to === '/'} onClick={close}>
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+        <Link to="/contact" className="btn btn-solid nav-cta" onClick={close}>
+          Get in touch
+        </Link>
+        <button
+          type="button"
+          className="burger"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          aria-controls="main-nav"
+          onClick={() => setOpen((o) => !o)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
+    </header>
+  )
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Add the live address once the domain is set, e.g.
+# Sitemap: https://www.example.com/sitemap.xml
