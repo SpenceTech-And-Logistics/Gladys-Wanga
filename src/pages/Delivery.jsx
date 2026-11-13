@@ -27,6 +27,29 @@ export default function Delivery() {
         </section>
       )}
 
+      {(a.results || []).length > 0 && (
+        <section className="wrap section">
+          <Reveal>
+            <span className="eyebrow">Results</span>
+            <h2 className="title" style={{ marginBottom: 14 }}>What the county has delivered</h2>
+            {a.resultsIntro && <p className="lead" style={{ marginBottom: 32 }}>{a.resultsIntro}</p>}
+          </Reveal>
+          <div className="grid grid-2 results">
+            {a.results.map((r, i) => (
+              <Reveal key={r.title} className="card" delay={(i % 2) * 90}>
+                <h3>{r.title}</h3>
+                <ul className="ticks">
+                  {String(r.text || '').split('\n').filter((l) => l.trim()).map((l, j) => <li key={j}>{l}</li>)}
+                </ul>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal style={{ marginTop: 28 }}>
+            <Link to="/projects" className="link-arrow">See the projects <span>→</span></Link>
+          </Reveal>
+        </section>
+      )}
+
       <section className="wrap section">
         <div className="split" style={{ alignItems: 'start' }}>
           <Reveal variant="left">

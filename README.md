@@ -36,6 +36,9 @@ The built-in content comes only from these public sources. Anything they did not
 
 Once Firebase is connected, anything saved in the dashboard replaces the built-in version.
 
+## Content sources
+Built-in content comes from the office's documents (the Governor's CV and profile sheet, the 2025 bio draft, the Third State of the County Address of 11 March 2026, the Senate remarks of 4 and 16 June 2026, and the county health agenda sheet) plus Wikipedia, the Parliament of Kenya, Mzalendo and the EJS Center. The three speeches are published as PDFs in `public/docs/`. The CV itself is not published (it holds private contact details and referees).
+
 ## Dashboard features
 - **Engagements are part of Events** (types County leadership, Parliament, Party and campaigns); `/engagements` links redirect to `/events`. If anything was saved under the old Engagements section, **Fill the database → Move into Events** moves it across.
 - **Positions** are a section of the About page (`/about#positions`); `/positions` redirects there.

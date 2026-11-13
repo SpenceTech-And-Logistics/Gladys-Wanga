@@ -13,7 +13,7 @@ export default function About() {
   const posCats = ['All', ...lists.positionCategories.filter((c) => positions.some((p) => p.category === c))]
   return (
     <>
-      <PageHead eyebrow="About" title={profile.title} lead={`${profile.name}, ${profile.officialName} in public records.`} />
+      <PageHead eyebrow="About" title={profile.title} lead={`Her Excellency ${profile.officialName}${profile.honours ? `, ${profile.honours}` : ''}.`} />
 
       <section className="wrap section-tight">
         <div className="split">

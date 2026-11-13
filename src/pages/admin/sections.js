@@ -5,6 +5,7 @@ const badge = (it) => (it.status === 'draft' ? 'Draft' : 'Published')
 
 export const profileFields = [
   { key: 'name', label: 'Name as shown', wide: false },
+  { key: 'honours', label: 'Honours (e.g. EGH, CBS)' },
   { key: 'officialName', label: 'Full name in public records' },
   { key: 'title', label: 'Title (shown on About)' },
   { key: 'office', label: 'Office (e.g. Governor)' },
@@ -23,6 +24,8 @@ export const profileFields = [
 
 export const deliveryFields = [
   { key: 'stats', label: 'Figures (home page strip and Governor’s office page)', type: 'list', noun: 'figure', wide: true, fields: [{ key: 'value', label: 'Number', type: 'number' }, { key: 'label', label: 'Label' }] },
+  { key: 'resultsIntro', label: 'Results: introduction', type: 'textarea', wide: true },
+  { key: 'results', label: 'Results by sector (one point per line)', type: 'list', noun: 'sector', wide: true, fields: [{ key: 'title', label: 'Sector' }, { key: 'text', label: 'Points, one per line', type: 'textarea' }] },
   { key: 'basis', label: 'Constitutional basis of the office', type: 'textarea', wide: true },
   { key: 'functions', label: 'Functions of the Governor', type: 'strings', long: true, wide: true },
   { key: 'commitments', label: 'Offices and party roles', type: 'list', noun: 'role', wide: true, fields: [{ key: 'name', label: 'Organisation' }, { key: 'role', label: 'Role' }, { key: 'note', label: 'Note' }] },
