@@ -52,6 +52,9 @@ export function waNumber(raw = '') {
   return d.length >= 11 ? d : ''
 }
 
+/** Most recent first: the reverse of oldestFirst, so undated items keep their place. */
+export const newestFirst = (list = []) => oldestFirst(list).reverse()
+
 /**
  * Oldest first, by the first year in each item's `when` ("2004 to 2012" → 2004).
  * Items with no year ("Secondary school") stay just after the item before them.

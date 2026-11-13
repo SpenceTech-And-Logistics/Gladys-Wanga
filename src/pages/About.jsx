@@ -4,7 +4,7 @@ import { EditLink } from '../components/AdminBar.jsx'
 import PageHead from '../components/PageHead.jsx'
 import Portrait from '../components/Portrait.jsx'
 import { Reveal } from '../components/Reveal.jsx'
-import { oldestFirst } from '../lib/media.js'
+import { newestFirst } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 
 export default function About() {
@@ -36,7 +36,7 @@ export default function About() {
       <section className="wrap section">
         <Reveal><span className="eyebrow">Career</span><h2 className="title" style={{ marginBottom: 32 }}>Service and milestones</h2></Reveal>
         <Reveal className="timeline">
-          {oldestFirst(profile.timeline).map((t) => (
+          {newestFirst(profile.timeline).map((t) => (
             <div className="t-item" key={t.title}>
               {t.when && <span className="t-when">{t.when}</span>}
               <h3>{t.title}</h3>
@@ -49,7 +49,7 @@ export default function About() {
       {profile.education.length > 0 && <section className="wrap section-tight">
         <Reveal><span className="eyebrow">Education</span><h2 className="title" style={{ marginBottom: 28 }}>Qualifications</h2></Reveal>
         <div className="grid grid-3">
-          {oldestFirst(profile.education).map((e, i) => (
+          {newestFirst(profile.education).map((e, i) => (
             <Reveal key={e.title} className="card" delay={i * 90}>
               {e.when && <span className="num">{e.when}</span>}
               <h3>{e.title}</h3>

@@ -3,7 +3,6 @@ import PageHead from '../components/PageHead.jsx'
 import Placeholder from '../components/Placeholder.jsx'
 import { Reveal } from '../components/Reveal.jsx'
 import { EditLink } from '../components/AdminBar.jsx'
-import ShareWhatsApp from '../components/ShareWhatsApp.jsx'
 import { formatDate } from '../lib/media.js'
 import { useContent } from '../lib/useContent.js'
 
@@ -35,7 +34,6 @@ export default function News() {
               {first.summary && <p className="muted" style={{ lineHeight: 1.6 }}>{first.summary}</p>}
               <div className="detail-actions">
                 {first.url && <a href={first.url} target="_blank" rel="noreferrer" className="link-arrow">Read the story <span>→</span></a>}
-                <ShareWhatsApp title={first.title} path={first.url ? undefined : '/news'} className="sm" />
                 <EditLink coll="press" id={first.id} />
               </div>
             </div>
@@ -52,7 +50,6 @@ export default function News() {
                 </div>
                 <div className="detail-actions">
                   {n.url && <a href={n.url} target="_blank" rel="noreferrer" className="link-arrow">Open <span>→</span></a>}
-                  <ShareWhatsApp title={n.title} path="/news" className="sm icon-only" />
                   <EditLink coll="press" id={n.id} />
                 </div>
               </Reveal>
