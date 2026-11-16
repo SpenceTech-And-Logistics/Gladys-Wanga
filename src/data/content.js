@@ -83,7 +83,7 @@ export const defaults = {
       { when: '2009 to 2013', title: 'Liverpool VCT, Care and Treatment', detail: 'Mobile and workplace HIV testing coordinator, then HIV Testing and Counselling and Wellness Manager from 2010: led the programme in five of Kenya’s eight provinces, sat on Ministry of Health technical working groups and created the WEMA Kazini workplace health brand.' },
       { when: '2013', title: 'Elected Woman Representative, Homa Bay County', detail: 'The first woman to hold the seat. Served five years on the Parliamentary Service Commission, the first woman commissioner from the Nyanza region, and started the Mama County Mentorship Programme for girls.' },
       { when: '2017', title: 'Re-elected unopposed', detail: 'Retained the Woman Representative seat and led Raila Odinga’s Nyanza presidential campaign team.' },
-      { when: '2018', title: 'Secretary, ODM Central Management Committee', detail: 'Also serves as chairperson of the ODM in Homa Bay County.' },
+      { when: '2018', title: 'Secretary, ODM Central Management Committee', detail: 'Appointed Secretary to the Orange Democratic Movement’s Central Management Committee.' },
       { when: '2020', title: 'First woman to chair the Finance and National Planning Committee', detail: 'Chaired the Departmental Committee on Finance and National Planning in the National Assembly.' },
       { when: '2022', title: 'Elected Governor of Homa Bay County', detail: 'Lead campaigner for the Azimio la Umoja coalition and one of seven women elected governor. Took office on 25 August 2022, the first woman to lead the county.' },
       { when: '2024', title: 'First woman National Chairperson of ODM', detail: 'Became the first woman to chair the Orange Democratic Movement, Kenya’s largest political party.' },
@@ -138,7 +138,6 @@ export const defaults = {
     commitments: [
       { name: 'Homa Bay County', role: 'Governor', note: 'Since 25 August 2022. The first woman to lead the county.' },
       { name: 'Orange Democratic Movement (ODM)', role: 'National Chairperson', note: 'Since 2024. The first woman to chair the party.' },
-      { name: 'Orange Democratic Movement, Homa Bay branch', role: 'Chairperson', note: 'Leads the party in the county.' },
       { name: 'ODM Central Management Committee', role: 'Secretary', note: 'Since 2018.' },
     ],
     source: 'Sources: the Third State of the County Address (11 March 2026), the Governor’s remarks to the Senate (4 and 16 June 2026), the Constitution of Kenya (Article 179) and the Parliament of Kenya member profile. The office updates these pages from the dashboard.',
@@ -181,8 +180,7 @@ export const defaults = {
   positions: [
     { id: 'governor', title: 'Governor', organisation: 'Homa Bay County', category: 'County', period: '2022 to present', description: 'Heads the county executive. The first woman elected to the office.', order: 1 },
     { id: 'odm-national', title: 'National Chairperson', organisation: 'Orange Democratic Movement (ODM)', category: 'Party', period: '2024 to present', description: 'The first woman to chair Kenya’s largest political party.', order: 2 },
-    { id: 'odm-hbc', title: 'Chairperson', organisation: 'ODM, Homa Bay County', category: 'Party', period: '', description: 'Has led the Orange Democratic Movement in the county, a position no woman had previously contested.', order: 2.5 },
-    { id: 'odm-cmc', title: 'Secretary', organisation: 'ODM Central Management Committee', category: 'Party', period: '2018 onward', description: 'Party secretary on the central management committee.', order: 3 },
+    { id: 'odm-cmc', title: 'Secretary', organisation: 'ODM Central Management Committee', category: 'Party', period: 'Since 2018', description: 'Party secretary on the central management committee, appointed in 2018.', order: 3 },
     { id: 'woman-rep', title: 'Woman Representative', organisation: 'Homa Bay County, National Assembly', category: 'Parliament', period: '2013 to 2022', description: 'The first woman to hold the seat. Retained it unopposed in 2017.', order: 4 },
     { id: 'fnp', title: 'Chairperson', organisation: 'Departmental Committee on Finance and National Planning', category: 'Parliament', period: '2020 to 2022', description: 'The first woman to chair the committee.', order: 5 },
     { id: 'psc', title: 'Commissioner', organisation: 'Parliamentary Service Commission', category: 'Parliament', period: 'Five years', description: 'The first woman from the Nyanza region to serve as a commissioner.', order: 6 },

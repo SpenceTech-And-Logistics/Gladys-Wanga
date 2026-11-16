@@ -103,7 +103,10 @@ export default function Home() {
         <div className="grid grid-4">
           {positions.slice(0, 4).map((p, i) => (
             <Reveal key={p.id || p.title} className="card" delay={i * 90}>
-              <span className="tag">{p.category}</span>
+              <div className="pos-top">
+                <span className="tag">{p.category}</span>
+                {p.period && <span className="pos-when">{p.period}</span>}
+              </div>
               <h3>{p.title}</h3>
               <p>{p.organisation}</p>
             </Reveal>
