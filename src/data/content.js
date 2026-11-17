@@ -76,7 +76,7 @@ export const defaults = {
       },
     ],
     timeline: [
-      { when: '1981', title: 'Born in Kisumu County', detail: 'Born Gladys Atieno Nyasuna on 7 March 1981, the first girl and third-born of seven children, and raised in Wang’aya estate. Her late father, John Nyasuna, was a councillor in Kisumu.' },
+      { when: '1981', title: 'Early life', detail: 'Born Gladys Atieno Nyasuna on 7 March 1981, the first girl and third-born of seven children, and raised in Wang’aya estate. Her late father, John Nyasuna, was a councillor in Kisumu.' },
       { when: 'Secondary school', title: 'Head girl at Kisumu Girls’ High School', detail: 'Served as head girl and was a strong advocate for social justice for her fellow students.' },
       { when: '2003', title: 'First woman Secretary General of the Kenyatta University students’ union', detail: 'Elected while studying for her bachelor’s degree in health management, which she completed in 2004.' },
       { when: '2004 to 2009', title: 'Trust for African Rock Art (TARA)', detail: 'Programme Manager from 2004, then acting Chief Operations Officer (2008 to 2009), managing community projects funded by the European Union, the Ford Foundation and the Arcadia Foundation.' },
